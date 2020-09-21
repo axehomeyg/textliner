@@ -1,8 +1,6 @@
 # Textliner
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/textliner`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Ruby wrapper gem for the Textline API.
 
 ## Installation
 
@@ -22,7 +20,35 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### example Rails integration
+```ruby
+# in config/initializers/textliner.rb
+Textliner.access_token($TEXTLINE_API_TOKEN)
+
+# in app/model/user.rb
+class User
+  after_create do
+    Textliner::Customer
+      .create(
+        name: name,
+        phone_number: phone,
+        email: email,
+        tags: ["new", "user"])
+  end
+end
+
+# in some marketing model like app/model/deal.rb
+class Deal
+  after_update do
+    subscribers.each do |subscriber|
+      Textliner::Customer
+        .by_phone_number(subscriber.phone)
+        .posts
+        .create(body: "Come check out this awesome new #{deal_name} deal"))
+    end
+  end
+end
+```
 
 ## Development
 

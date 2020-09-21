@@ -96,6 +96,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activemodel
   activeresource
   guard-rspec
   rake (~> 12.0)

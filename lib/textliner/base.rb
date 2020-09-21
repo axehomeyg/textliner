@@ -1,13 +1,21 @@
-require 'ostruct'
-require 'uri'
-require 'active_resource'
-
 module Textliner
+
   class Base < ::ActiveResource::Base
     self.site = "https://application.textline.com/api"
     self.include_root_in_json = true
+    self.collection_parser = ::Textliner::Collection
+    self.format = ::Textliner::Formatter
 
-    headers['X-TGP-ACCESS-TOKEN'] = "dummy" # (Rails.application.credentials.textline || {})[:access_token]
+
+    include Textliner::ScopeProxy
+    include Textliner::Format
+
+    class << self
+      def access_token(value)
+        # e.g. headers['X-TGP-ACCESS-TOKEN'] = (Rails.application.credentials.textline || {})[:access_token]
+        headers['X-TGP-ACCESS-TOKEN'] = value
+      end
+    end
   end
 end
 

@@ -7,8 +7,8 @@ Gem::Specification.new do |spec|
   spec.email         = ["cerna5150@yahoo.com"]
 
   spec.summary       = %q{Ruby Client for the Textline API.}
-  # spec.description   = %q{TODO: Write a longer description or delete this line.}
-  # spec.homepage      = "TODO: Put your gem's website or public repo URL here."
+  spec.description   = %q{Rails-friendly Ruby wrapper for the Textline API.}
+  spec.homepage      = "https://TODO: Put your gem's website or public repo URL here."
   spec.license       = "MIT"
   spec.required_ruby_version = Gem::Requirement.new(">= 2.3.0")
 

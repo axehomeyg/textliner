@@ -1,49 +1,58 @@
+require 'active_resource'
+require "textliner/collection"
+require "textliner/format"
+require "textliner/scope_proxy"
+require "textliner/version"
+
+# models
 require "textliner/base"
 require "textliner/conversation"
 require "textliner/customer"
 require "textliner/post"
-require "textliner/version"
 
 module Textliner
+  DEFAULT_MAX_PAGES = 30
+  DEFAULT_THROTTLE = 0.2
+
   class Error < StandardError; end
-  # Your code goes here...
-end
 
-module Textliner
-  def self.max_pages ; 30 ; end
-  def self.throttle ; 0.2 ; end
+  class << self
+    attr_accessor :max_pages, :throttle
 
-  def self.every_page(&block)
-    1.upto(self.max_pages, &block)
-  end
+    def access_token=(value)
+      Textliner::Base.access_token(value)
+    end
 
-  def self.to_source_relation
-    ['textline', 'message']
-  end
+    def upto(&block)
+      1.upto(max_pages) do |n|
+        apply_throttle
+        block.call(n)
+      end
+    end
 
-  # For full dump
-  def self.since(unused_date) ; self.all_posts ; end
+    def each(finder, &block)
+      finder
+        .tap do |results|
+          return if results.empty?
+        end
+        .each(&block)
+    end
 
-  def self.all_posts
-    posts = {}
-    self.every_page do |i|
-      conversations  = Textliner::Conversation.find(:all, params: { page: i })
-      break if conversations.empty?
-      conversations.each do |conversation|
-        sleep Textliner.throttle
-        # puts "Conversation: #{conversation.inspect}"
-        self.every_page do |j|
-          psts = Textliner::Post.find(:all, params: { conversation_id: conversation.id, page: j })
+    def apply_throttle
+      sleep(throttle) if throttle
+    end
 
-          break if psts.empty?
-
-          psts.each do |post|
-            posts[post.id] = post
+    def all_posts(&block)
+      upto do |i|
+        each(Textliner::Conversation.page(i).find(:all)) do |conversation|
+          upto do |j|
+            each(Textliner::Post.page(j).by_conversation(conversation.id).find(:all), &block)
           end
         end
       end
     end
-    posts.values
   end
 end
 
+Textliner.max_pages = Textliner::DEFAULT_MAX_PAGES
+Textliner.throttle  = Textliner::DEFAULT_THROTTLE
