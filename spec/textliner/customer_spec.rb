@@ -34,4 +34,11 @@ RSpec.describe Textliner::Customer do
         .phone_number
     ).to eql(phone)
   end
+
+  it "reports on reachability" do
+    mock_textline_request(:retrieve_customer_by_phone)
+    
+    expect(Textliner::Customer.find_by_phone_number(phone))
+      .to be_reachable
+  end
 end

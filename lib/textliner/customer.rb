@@ -18,6 +18,11 @@ module Textliner
     scope :by_phone_number, ->(phone) {
       {params: { phone_number: phone } }
     }
+
+    def reachable?
+      reachable_by_sms?
+    end
+
   end
 end
 

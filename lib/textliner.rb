@@ -65,13 +65,24 @@ module Textliner
         .find_by_phone_number(customer_data[:phone_number])
         .yield_self(&block)
     end
-           
-    def message(customer_data, body)
+
+    def validate_message_if(condition, message)
+      if condition
+        raise Textliner::Error.new(message)
+      end
+    end
+
+    # the main interface for this gem for those that don't want to
+    # think of the data model underneath the API
+    def message(customer_data, body, &error_block)
       phone_number = customer_data[:phone_number]
 
       payload = { comment: { body: body } }
 
       with_customer(customer_data) do |customer|
+        validate_message_if(!customer, "Customer Creation Failed :: #{customer_data}")
+        validate_message_if(!customer.reachable?, "Customer Creation Failed :: #{customer_data}")
+
         with_conversation(customer_data) do |conversation|
           conversation ?
             Textliner::Post
@@ -84,6 +95,19 @@ module Textliner
                 }.merge(payload))
         end
       end
+    rescue Textliner::Error => e
+      if error_block
+        error_block.call(e)
+      else
+        raise e
+      end 
+    rescue => e
+      err = Textliner::Error.new(e)
+      if error_block
+        error_block.call(err)
+      else
+        raise err
+      end 
     end
   end
 end
