@@ -1,10 +1,31 @@
 module Textliner
+  class FormatDSL
+    attr_accessor :enc, :dec
+
+    def encoder(&block)
+      self.enc = block
+    end
+
+    def decoder(&block)
+      self.dec = block
+    end
+
+    def formatter
+      Textliner::Formatter.with_coders(enc, dec)
+    end
+  end
+
   module Format
     def self.included(base)
 
       class << base
-        def decoder(&block)
-          self.format = Textliner::Formatter.with_decoder(block)
+
+        def formatted(&block)
+          self.format = FormatDSL
+            .new
+            .tap do |format_dsl|
+              block.call(format_dsl)
+          end.formatter
         end
       end
     end
@@ -15,19 +36,39 @@ module Textliner
 
     extend self
 
-    def self.with_decoder(decoder)
-      # we allow each class to define its own decoder
-      # to handle inconsistent api response nesting 
+    def self.customized
       Class
         .new
         .include(self)
-        .tap do |klass|
-          klass.instance_variable_set("@decoder", decoder)
-        end.new
+        .new
+    end
+
+    def self.with_coders(encoder, decoder)
+      # we allow each class to define its own decoder
+      # to handle inconsistent api response nesting 
+
+      customized
+        .tap do |kustom|
+          kustom
+            .class
+            .tap do |k|
+              if decoder
+                k.instance_variable_set("@decoder", decoder)
+              end
+
+              if encoder
+                k.instance_variable_set("@encoder", encoder)
+              end
+            end
+        end
     end
 
     def decode_json(json)
       ActiveSupport::JSON.decode(json)
+    end
+    
+    def encode_hash(hash, options = {})
+      ActiveSupport::JSON.encode(hash, options)
     end
 
     # let's normalize UUID (sometime's its called id, uuid, OBJECT_uuid)
@@ -83,6 +124,24 @@ module Textliner
             decoder.call(data) :
             data
       end
+    end
+
+    def apply_custom_encoder(hash)
+      return if hash.nil?
+
+      self
+        .class
+        .instance_variable_get("@encoder")
+        .yield_self do |encoder|
+          encoder ?
+            encoder.call(hash) :
+            hash
+      end
+
+    end
+
+    def encode(hash, options = {})
+      encode_hash(apply_custom_encoder(hash), options)
     end
 
     def decode(json)

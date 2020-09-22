@@ -1,11 +1,10 @@
 require 'spec_helper'
 
 RSpec.describe Textliner::Conversation do
-  before :each do
-    stub_textline!
-  end
 
   it "list conversations - all for account" do
+    mock_textline_request(:list_conversations)
+
     conversations = Textliner::Conversation.find(:all)
 
     expect(conversations.length).to eql(1)
@@ -16,6 +15,8 @@ RSpec.describe Textliner::Conversation do
   end
 
   it "list conversation - all for account, paginated" do
+    mock_textline_request(:list_conversations_for_page)
+
     conversations = Textliner::Conversation.find(:all, params: { page: 3 })
 
     expect(conversations.length).to eql(1)

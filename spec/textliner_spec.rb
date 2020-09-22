@@ -17,4 +17,54 @@ RSpec.describe Textliner do
       expect(posts.first.phone_number).to eql("(222) 222-2222")
     end
   end
+
+  it "supports sending a first time message" do
+    # starts with a customer
+    #
+    # checks for existing  message
+    #
+    # sends new message to customer
+
+    mock_textline_request(:retrieve_customer_by_phone_error_200)
+    mock_textline_request(:conversation_by_phone_error_200)
+    mock_textline_request(
+      :create_customer_by_phone,
+      "{\"customer\":{\"phone_number\":\"missing_but_valid\"}}")
+
+    mock_textline_request(
+      :create_conversation_by_phone,
+      "{\"phone_number\":\"missing_but_valid\",\"comment\":{\"body\":\"bawdy\"}}")
+
+
+    phone = "missing_but_valid"
+
+    post = Textliner.message({phone_number: phone}, "bawdy")
+
+    # since this is a full Post, we get back an id for the post
+    expect(post.id).to eql("84a2c56f-6b79-4764-811d-90880e2757b4")
+  end
+
+  it "supports sending a subsequent message" do
+    # starts with a customer
+    #
+    # checks for existing message
+    #
+    # sends to existing conversation
+    phone = "+2222222222"
+
+    mock_textline_request(:retrieve_customer_by_phone)
+
+    mock_textline_request(:conversation_by_phone)
+
+    mock_textline_request(
+      :append_conversation,
+      "{\"comment\":{\"body\":\"bawdy\"}}")
+
+    conversation = Textliner.message({phone_number:  phone}, "bawdy")
+    
+    # we get back a Conversation, with an initial message
+    # we don't get back the Post ID as part of this payload
+    expect(conversation.conversation_id).to eql("84a2c56f-6b79-4764-811d-90880e2757b4")
+  end
+
 end

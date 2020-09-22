@@ -15,7 +15,6 @@ module Textliner
       end
     end
 
-
     scope :by_phone_number, ->(phone) {
       {params: { phone_number: phone } }
     }
