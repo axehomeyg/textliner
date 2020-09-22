@@ -38,13 +38,15 @@ class User
 end
 
 # in some marketing model like app/model/deal.rb
+# sending txt requires a sequence of...
+# find-or-create customer -> find-or-create conversation -> append message
+# so it's encapsulated by the Textliner.message wrapper
 class Deal
   after_update do
     subscribers.each do |subscriber|
-      Textliner::Customer
-        .by_phone_number(subscriber.phone)
-        .posts
-        .create(body: "Come check out this awesome new #{deal_name} deal"))
+      Textliner.message(
+        subscriber.attributes, # req. :phone_number
+        "Come check out this awesome new #{deal_name} deal")
     end
   end
 end
