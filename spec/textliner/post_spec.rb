@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 RSpec.describe Textliner::Post do
-  include TextlinerSpecHelper
-
   before :each do
     stub_textline!
   end

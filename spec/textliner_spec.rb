@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 RSpec.describe Textliner do
-  include TextlinerSpecHelper
-  
   describe "ETL Helpers" do
     it "retrieves ALL posts" do
       stub_textline_api!

@@ -2,9 +2,10 @@ require "bundler/setup"
 require "textliner"
 require 'webmock/rspec'
 
-require File.expand_path(File.join(File.dirname(__FILE__), 'support/textliner.rb'))
+require "textliner/spec_helper"
 
 RSpec.configure do |config|
+  config.include Textliner::SpecHelper
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = ".rspec_status"
 

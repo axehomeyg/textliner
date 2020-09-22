@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe Textliner::Customer do
-  include TextlinerSpecHelper
+  # include TextlinerSpecHelper
   let(:phone) { "(222) 222-2222" }
 
   it "#find_by_phone_number" do

@@ -23,7 +23,7 @@ Or install it yourself as:
 ### example Rails integration
 ```ruby
 # in config/initializers/textliner.rb
-Textliner.access_token($TEXTLINE_API_TOKEN)
+Textliner.access_token = $TEXTLINE_API_TOKEN
 
 # in app/model/user.rb
 class User
