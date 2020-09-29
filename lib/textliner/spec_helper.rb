@@ -10,6 +10,9 @@ module Textliner
         conversation_by_phone: [ :get, "https://application.textline.com/api/conversations.json?phone_number=%2B2222222222" ],
         conversation_by_phone_error_200: [ :get, /https:\/\/application.textline.com\/api\/conversations\.json\?phone_number=missing.*/ ],
         list_conversations_for_page: [ :get, /^https:\/\/application.textline.com\/api\/conversations\.json\?page=\d+$/ ],
+
+        update_customer: [ :put, /^https:\/\/application.textline.com\/api\/customer\/[0-9a-f\-]+.json/],
+
         retrieve_customer_by_phone: [ :get, /^https:\/\/application.textline.com\/api\/customers\.json\?phone_number=[^a-z]+$/ ],
         retrieve_customer_by_phone_error_200: [ :get, /^https:\/\/application.textline.com\/api\/customers\.json\?phone_number=missing.*$/ ],
         create_customer_by_phone: [ :post, "https://application.textline.com/api/customers.json" ] ,
@@ -35,7 +38,6 @@ module Textliner
     end
 
     def mock_textline_request(fixture_name, body = nil, status = 200)
-
       opts = textline_stubs[fixture_name]
 
       write = [:post, :put, :delete].include?(opts[0])

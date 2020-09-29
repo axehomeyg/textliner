@@ -6,7 +6,6 @@ module Textliner
     self.collection_parser = ::Textliner::Collection
     self.format = ::Textliner::Formatter
 
-
     include Textliner::ScopeProxy
     include Textliner::Format
 
