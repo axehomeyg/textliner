@@ -42,7 +42,7 @@ module Textliner
 
     def to_json(opts = {})
       self.class.format.encode(
-        attributes
+        attributes.merge(comment_payload)
       )
     end
   end

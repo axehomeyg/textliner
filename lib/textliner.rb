@@ -74,10 +74,10 @@ module Textliner
 
     # the main interface for this gem for those that don't want to
     # think of the data model underneath the API
-    def message(customer_data, body, &error_block)
+    def message(customer_data, msg, &error_block)
       phone_number = customer_data[:phone_number]
 
-      payload = { comment: { body: body } }
+      payload = payload_for(msg)
 
       with_customer(customer_data) do |customer|
         validate_message_if(!customer, "Customer Creation Failed :: #{customer_data}")
@@ -108,6 +108,21 @@ module Textliner
       else
         raise err
       end 
+    end
+
+    def payload_for(msg)
+      if msg.is_a?(String)
+        { comment: { body: msg } }
+      elsif msg.is_a?(Hash)
+        if msg[:attachment]
+          { 
+            comment: { body: msg[:body] },
+            attachments: [ msg[:attachment] ]
+          }
+        else
+          { comment: { body: msg[:body] } }
+        end
+      end
     end
   end
 end

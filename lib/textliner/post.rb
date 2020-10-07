@@ -49,8 +49,7 @@ module Textliner
     end
 
     def to_json(opts = {})
-      self.class.format.encode(
-        {comment: comment}, opts)
+      self.class.format.encode(comment_payload, opts)
     end
 
     scope :by_conversation, ->(id) {

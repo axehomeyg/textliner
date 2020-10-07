@@ -17,8 +17,10 @@ module Textliner
         retrieve_customer_by_phone_error_200: [ :get, /^https:\/\/application.textline.com\/api\/customers\.json\?phone_number=missing.*$/ ],
         create_customer_by_phone: [ :post, "https://application.textline.com/api/customers.json" ] ,
         create_conversation_by_phone: [ :post, "https://application.textline.com/api/conversations.json" ] ,
+        create_conversation_by_phone_with_attachment: [ :post, "https://application.textline.com/api/conversations.json" ] ,
 
         append_conversation: [ :post, /https:\/\/application.textline.com\/api\/conversation\/[0-9a-f\-]+.json/ ],
+        append_conversation_with_attachment: [ :post, /https:\/\/application.textline.com\/api\/conversation\/[0-9a-f\-]+.json/ ],
         conversation_by_phone_since: [ :get, /^https:\/\/application.textline.com\/api\/conversations\.json\?after_uuid=[^&]+&phone_number=%2B2222222222/ ],
       }.yield_self do |st|
         has_block ?

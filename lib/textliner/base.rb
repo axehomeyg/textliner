@@ -15,6 +15,21 @@ module Textliner
         headers['X-TGP-ACCESS-TOKEN'] = value
       end
     end
+
+
+    def comment_payload
+      {}.merge(
+        attributes[:comment].present? ?
+        { comment: comment } :
+        {}
+      ).merge(
+        attributes[:attachments].present? ?
+        { attachments: attachments } :
+        {}
+      )
+    end
+
+
   end
 end
 
