@@ -76,7 +76,7 @@ RSpec.describe Textliner do
 
     mock_textline_request(
       :append_conversation_with_attachment,
-      "{\"comment\":{\"body\":\"bawdy\"},\"attachments\":[\"http://www.dwellsocial.com/map.jpg\"]}")
+      "{\"comment\":{\"body\":\"bawdy\"},\"attachments\":[{\"url\":\"http://www.dwellsocial.com/map.jpg\"}]}")
 
     conversation = Textliner.message({phone_number:  phone}, body: "bawdy", attachment: "http://www.dwellsocial.com/map.jpg")
 
@@ -92,7 +92,7 @@ RSpec.describe Textliner do
 
     mock_textline_request(
       :create_conversation_by_phone_with_attachment,
-      "{\"phone_number\":\"missing_but_valid\",\"comment\":{\"body\":\"bawdy\"},\"attachments\":[\"http://www.dwellsocial.com/map.jpg\"]}")
+      "{\"phone_number\":\"missing_but_valid\",\"comment\":{\"body\":\"bawdy\"},\"attachments\":[{\"url\":\"http://www.dwellsocial.com/map.jpg\"}]}")
 
     phone = "missing_but_valid"
 

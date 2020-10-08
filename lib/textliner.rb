@@ -117,7 +117,7 @@ module Textliner
         if msg[:attachment]
           { 
             comment: { body: msg[:body] },
-            attachments: [ msg[:attachment] ]
+            attachments: [ { url: msg[:attachment] } ]
           }
         else
           { comment: { body: msg[:body] } }
