@@ -102,4 +102,11 @@ RSpec.describe Textliner do
     expect(post.id).to eql("84a2c56f-6b79-4764-811d-90880e2757b4")
   end
 
+  describe "#payload_for" do
+    it "does not provide blank attachment to api" do
+      body = "boawdy"
+
+      expect(Textliner.payload_for(body: body, attachment: "")).to eql(comment: {body: body })
+    end
+  end
 end

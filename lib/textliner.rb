@@ -114,7 +114,7 @@ module Textliner
       if msg.is_a?(String)
         { comment: { body: msg } }
       elsif msg.is_a?(Hash)
-        if msg[:attachment]
+        if msg[:attachment] && !msg[:attachment].empty?
           { 
             comment: { body: msg[:body] },
             attachments: [ { url: msg[:attachment] } ]
